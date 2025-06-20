@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+  namespace: backend-dev
+  labels:
+    app: backend
+    tier: db
+  annotations:
+    maintainer: "rajeshpeta68@gmail.com"
+    purpose: "MySQL database for multi-tier application"
+spec:
+  containers:
+  - name: mysql-container
+    image: mysql:5.7
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "rootpassword"
+    volumeMounts:
+     - mountPath: /var/lib/mysql
+       name: mysql-storage
+  volumes:
+  - name: mysql-storage
+    persistentVolumeClaim:
+      claimName: mysql-pvc
