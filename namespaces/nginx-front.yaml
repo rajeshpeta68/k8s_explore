@@ -1,0 +1,73 @@
+###########namespace############
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend-dev
+---
+#resource quote for namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: frontend-dev-quota
+  namespace: frontend-dev
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: "1Gi"
+    limits.cpu: "2"
+    limits.memory: "2Gi"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: frontend-dev-limits
+  namespace: frontend-dev
+spec:
+  limits:
+  - default:
+      cpu: "500m"
+      memory: "256Mi"
+    defaultRequest:
+      cpu: "200m"
+      memory: "128Mi"
+    type: Container
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-frontend
+  namespace: frontend-dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-frontend
+  template:
+    metadata:
+      labels:
+        app: nginx-frontend
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "128Mi"
+          limits: 
+            cpu: "500m"
+            memory: "256Mi"
+      - name: log-sidecar 
+        image: busybox
+        command: ["sh", "-c", "while true; do echo 'Logs from sidecar at $(date)' >> /var/log/nginx/access.log; sleep 5; done"]
+        volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log/nginx
+      volumes:
+      - name: shared-logs
+        emptyDir: {}  
+      restartPolicy: Always
+status: {}
+---
