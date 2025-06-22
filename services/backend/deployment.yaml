@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: node:18
+          command: ["node", "-e"]
+          args:
+            - |
+              const http = require('http');
+              const redis = require('redis');
+              const client = redis.createClient({url: 'redis://redis-0.redis.default.svc.cluster.local:6379'});
+              client.connect();
+              http.createServer((req, res) => {
+                client.incr('counter').then(count => {
+                  res.end('Counter: ' + count);
+                });
+              }).listen(8080);
+          ports:
+            - containerPort: 8080
