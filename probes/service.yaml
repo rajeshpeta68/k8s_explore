@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: probes-demo
+  labels:
+    app: probes-demo
+spec:
+  selector:
+    app: probes-demo
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 30008
+  type: NodePort

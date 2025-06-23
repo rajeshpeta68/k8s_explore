@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probes-demo
+  labels:
+    app: probes-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: probes-demo
+  template:
+    metadata:
+      labels:
+        app: probes-demo
+    spec:
+      containers:
+      - name: probes-demo
+        image: rajeshpeta123/probe-demo:latest
+        ports:
+        - containerPort: 8080
+        startupProbe:
+          httpGet:
+            path: /startup
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          periodSeconds: 10
+          initialDelaySeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
