@@ -2,34 +2,25 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: demo-ingress
-  namespace: demo
+  name: my-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: / # optional
 spec:
-  ingressClassName: nginx  # Make sure your controller matches this class
+  ingressClassName: nginx
   rules:
-  - host: demo.local
-    http:
+  - http:
       paths:
-      - path: /
+      - path: /app1
         pathType: Prefix
         backend:
           service:
-            name: frontend
+            name: app1
             port:
               number: 80
-      - path: /api
+      - path: /app2
         pathType: Prefix
         backend:
           service:
-            name: backend
-            port:
-              number: 80
-      - path: /php
-        pathType: Prefix
-        backend:
-          service:
-            name: php-app
+            name: app2
             port:
               number: 80
