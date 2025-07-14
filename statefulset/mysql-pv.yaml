@@ -1,0 +1,13 @@
+# mysql-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data/mysql   # For test/demo purposes, works on local clusters like Minikube
+  persistentVolumeReclaimPolicy: Retain
