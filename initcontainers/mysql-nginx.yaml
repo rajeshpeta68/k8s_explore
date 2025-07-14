@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-app
+spec:
+  initContainers:
+  - name: wait-for-mysql
+    image: busybox
+    command: ['sh', '-c', 'until nslookup mysql; do echo waiting for mysql; sleep 2; done;']
+  containers:
+  - name: main-app
+    image: nginx
+    ports:
+    - containerPort: 80
