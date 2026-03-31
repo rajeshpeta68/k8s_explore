@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: dev
+spec:
+  selector:
+    app: webapp
+    env: dev
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: prod
+spec:
+  selector:
+    app: webapp
+    env: prod
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort

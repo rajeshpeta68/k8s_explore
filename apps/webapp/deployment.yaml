@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  namespace: dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapp
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: webapp
+        env: dev
+    spec:
+      containers:
+      - name: webapp-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: webapp-config-volume
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: webapp-storage-volume
+          mountPath: /mnt/data
+      volumes:
+      - name: webapp-config-volume
+        configMap:
+          name: webapp-config
+      - name: webapp-storage-volume
+        persistentVolumeClaim:
+          claimName: webapp-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  namespace: prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+      env: prod
+  template:
+    metadata:
+      labels:
+        app: webapp
+        env: prod
+    spec:
+      containers:
+      - name: webapp-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: webapp-config-volume
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: webapp-storage-volume
+          mountPath: /mnt/data
+      volumes:
+      - name: webapp-config-volume
+        configMap:
+          name: webapp-config
+      - name: webapp-storage-volume
+        persistentVolumeClaim:
+          claimName: webapp-pvc 
