@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: web-app-cronjob
+  namespace: dev
+spec:
+  schedule: "*/2 * * * *" # Run every 2 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: web-app-cronjob
+            image: busybox
+            args:
+            - /bin/sh
+            - -c
+            - date >> /data/log.txt
+            volumeMounts:
+            - name: log-volume
+              mountPath: /data
+          restartPolicy: OnFailure
+          volumes:
+          - name: log-volume
+            persistentVolumeClaim:
+              claimName: web-app-pvc

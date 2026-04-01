@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  namespace: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels: 
+        app: web-app
+    spec:
+      serviceAccountName: web-app-sa
+      containers:
+      - name: web-app-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: log-volume
+          mountPath: /var/log/nginx
+        - name: log-volume
+          mountPath: /data
+        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+        
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+      volumes:
+      - name: config-volume
+        configMap:
+          name: dev-config
+      - name: log-volume
+        persistentVolumeClaim:
+          claimName: web-app-pvc

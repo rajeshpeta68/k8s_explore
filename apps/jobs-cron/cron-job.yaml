@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: simple-cron-job
+  namespace: default
+spec:
+  schedule: "*/1 * * * *" # Run every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:   
+          containers:
+            - name: simple-cron-job-container
+              image: busybox
+              command: ["sh", "-c", "echo Hello from Cron Job && sleep 5"]
+          restartPolicy: Never

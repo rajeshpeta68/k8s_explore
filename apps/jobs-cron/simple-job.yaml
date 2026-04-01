@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: simple-job
+  namespace: default
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 3
+
+  template:
+   spec:   
+      containers:
+        - name: simple-job-container
+          image: busybox
+          command: ["sh", "-c", "echo Hello from Job && sleep 5"]
+      restartPolicy: Never
