@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vpa-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vpa-app
+  template:
+    metadata:
+      labels:
+        app: vpa-app
+    spec:
+      containers:
+      - name: vpa-container
+        image: nginx
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "200Mi"
